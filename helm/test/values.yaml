@@ -1,0 +1,51 @@
+# Default values for test.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+deployments:
+  gateway:
+    replica: 1
+    name: gateway
+    image: brick777/gateway-service:latest
+    imagePullPolicy: IfNotPresent
+    containerPort: 8082
+    namePort: port-dep
+    config:
+      - name: SPRING_CLOUD_KUBERNETES_ENABLED
+        value: "true"
+      - name: SPRING_CLOUD_KUBERNETES_RELOAD_ENABLED
+        value: "false"
+      - name: "logging.level.org.springframework.cloud.kubernetes"
+        value: "TRACE"
+
+  customer:
+    replica: 3
+    name: customer
+    image: brick777/customer:latest
+    imagePullPolicy: IfNotPresent
+    containerPort: 8080
+    namePort: port-dep
+
+services:
+  gateway:
+    serviceType: ClusterIP
+    containerPort: 8080
+    targetPort: 8082
+    selector: gateway
+    portName: port-srv
+  customer-service:
+    serviceType: ClusterIP
+    containerPort: 3000
+    targetPort: 8080
+    selector: customer
+    portName: port-srv
+
+ingress:
+  name: ingress-service
+  replicaCount: 1  
+  hosts:
+    - host: pawel.test
+      paths: 
+        - path: /.*
+          backend:
+            serviceName: gateway
+            servicePort: 8080

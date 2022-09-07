@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: example-app
+  labels:
+    release: prometheus
+spec:
+  namespaceSelector:
+    matchNames:
+    - default
+  selector:
+    matchLabels:
+      app: customer
+      interval: 10s
+podMetricsEndpoints:
+  - honorLabels: true
+    interval: 10s
+    path: /actuator/prometheus
+    port: custweb
