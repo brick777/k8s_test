@@ -1,6 +1,0 @@
-version: "3.7"
-services:
-  customer:
-    image: brick777/customer:latest
-    ports:
-      - 8761:8080
